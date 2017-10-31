@@ -1,0 +1,61 @@
+--- # Docker Installation
+- hosts: "{{ variable_host | default('AzureVMs') }}"
+  become: yes
+  become_method: sudo
+  user: cizi
+  connection: ssh
+
+
+  tasks:
+    - name: Ensure yum-utils is installed
+      package:
+        name: 
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+      become: true
+ 
+    - name: Add Docker CE repository
+      get_url:
+         url: https://download.docker.com/linux/centos/docker-ce.repo
+         dest: /etc/yum.repos.d/docker-ce.repo
+         mode: 0644
+      become: true
+      register: yum_repo
+
+    - name: Determine Docker CE Edge repo status
+      shell: yum-config-manager docker-ce-edge | grep enabled
+      ignore_errors: yes
+      changed_when: false
+      register: cmd_docker_ce_edge_enabled
+
+    - name: Installation of Docker CE
+      yum:
+         name: docker-ce
+         state: present
+         
+
+    - name: Create a Directory for the Docker Compose
+      file:
+         path: /opt/bin
+         state: directory
+         mode: 0755
+
+    - name: Installation of Docker Compose
+      get_url:
+         url: https://github.com/docker/compose/releases/download/1.16.1/docker-compose-{{ ansible_system }}-{{ ansible_architecture }} 
+         dest: /opt/bin/docker-compose
+         mode: 0755
+ 
+    - name: Starting Docker Service 
+      service:
+         name: docker
+         state: started
+        
+
+    - name: Adding Docker Group to cizi
+      user:
+         name: cizi
+         groups: docker
+         append: yes
