@@ -106,7 +106,7 @@ resource "azurerm_virtual_machine" "vm" {
 
     ssh_keys {
       path     = "/home/cizi/.ssh/authorized_keys"
-      key_data = "${file("pub-key")}"}
+      key_data = "${file("${path.module}/pub-key")}"}
   }
 
   boot_diagnostics {
