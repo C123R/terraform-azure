@@ -1,10 +1,5 @@
 # Configure the Microsoft Azure Provider
-provider "azurerm" {
-  subscription_id = "..."
-  client_id       = "..."
-  client_secret   = "..."
-  tenant_id       = "..."
-}
+provider "azurerm" {}
 
 # Create a resource group
 resource "azurerm_resource_group" "production" {
@@ -34,4 +29,3 @@ resource "azurerm_virtual_network" "network" {
     address_prefix = "10.0.3.0/24"
   }
 }
-»

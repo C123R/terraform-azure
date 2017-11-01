@@ -1,6 +1,8 @@
-provider "azurerm" {
-
+module "child" {
+  source = "./child"
 }
+
+provider "azurerm" {}
 
 resource "azurerm_resource_group" "rg" {
   name     = "${var.resource_group}"
@@ -101,10 +103,11 @@ resource "azurerm_virtual_machine" "vm" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
-            path     = "/home/cizi/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDL1EnJq2BhZqmI/wndLdpz+Z5Zt5EWUGITg61vJV7FXNcA6kpgl0fytUmv6lu/37ma0KfVMMRDRxeo+toz6Or3eKeil4FQ4XeBAsszyjRIP+Qag01NprXUIfPNOxaYfam+A3MoxsSqmboBHWjSxwfujrI44vw4ThwCeA+X9aDv/MbCE8GXNe/9JStHntJmCfPV/b7T5v3MXropiZqEJZ9bSrequdYOqHSqrvd7Jkn9y8DbU6+fScJ7ou/wo+EmuJfZzL7MSoR0OZ3DHEf5XUe35KoYpeQ1TvlSx4m+f2VijigdTlPCTf0//1HH+g8Tyuu0kurmRzVLBgYVtvYvoe6z cizi@Cizers-MacBook-Pro.local"
-        }
+      path     = "/home/cizi/.ssh/authorized_keys"
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDL1EnJq2BhZqmI/wndLdpz+Z5Zt5EWUGITg61vJV7FXNcA6kpgl0fytUmv6lu/37ma0KfVMMRDRxeo+toz6Or3eKeil4FQ4XeBAsszyjRIP+Qag01NprXUIfPNOxaYfam+A3MoxsSqmboBHWjSxwfujrI44vw4ThwCeA+X9aDv/MbCE8GXNe/9JStHntJmCfPV/b7T5v3MXropiZqEJZ9bSrequdYOqHSqrvd7Jkn9y8DbU6+fScJ7ou/wo+EmuJfZzL7MSoR0OZ3DHEf5XUe35KoYpeQ1TvlSx4m+f2VijigdTlPCTf0//1HH+g8Tyuu0kurmRzVLBgYVtvYvoe6z cizi@Cizers-MacBook-Pro.local"
+    }
   }
 
   boot_diagnostics {
@@ -113,8 +116,6 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   provisioner "local-exec" {
-
     command = "echo ${azurerm_public_ip.pip.fqdn} >> hosts && ansible-playbook --extra-vars ${azurerm_public_ip.pip.fqdn} docker.yml"
   }
-
 }
